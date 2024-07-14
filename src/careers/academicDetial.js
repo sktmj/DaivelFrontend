@@ -432,7 +432,7 @@ const AcademicDetails = () => {
         "Success",
         "Qualifications and Courses submitted successfully"
       );
-      Navigation.navigate("Experience")
+      Navigation.navigate("WorkExperience")
       setFormChanged(false); // Reset form change tracking
     } catch (error) {
       console.error("Error adding/updating qualifications and courses:", error);

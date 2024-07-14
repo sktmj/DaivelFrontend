@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function Login() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
-  const [userType, setUserType] = useState("Admin"); // Default to "Admin"
+  const [userType, setUserType] = useState("Carrier"); // Default to "Admin"
   const Navigation = useNavigation();
 
   const handleLogin = async () => {
@@ -37,7 +37,7 @@ export default function Login() {
         await AsyncStorage.setItem("token", responseData.token);
         await AsyncStorage.setItem("AppId", JSON.stringify(responseData.AppId)); // Stringify AppId
         console.log("Token and AppId stored:", responseData.token, responseData.AppId);
-
+        Alert.alert('Welcome back....!')
         Navigation.navigate("Application Form");
       } else {
         console.error("Token or AppId not received");

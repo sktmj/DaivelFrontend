@@ -53,11 +53,11 @@ const SignUp = () => {
         setShowUsernamePassword(true);
         Alert.alert('OTP verified successfully');
       } else {
-        Alert.alert('Failed to verify OTP');
+        Alert.alert('Failed to verify OTP & Choose Another Mobile Number');
       }
     } catch (error) {
       console.error('Error verifying OTP:', error);
-      Alert.alert('Failed to verify OTP');
+      Alert.alert('Failed to verify OTP & Choose Another Mobile Number');
     }
   };
 
@@ -181,7 +181,8 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     width: '100%',
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    color:"black"
   },
   buttonText: {
     color: '#fff',

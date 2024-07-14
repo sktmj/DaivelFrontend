@@ -292,7 +292,7 @@ import {
         );
         if (response.data.success) {
           Alert.alert("Success", "Other fields added successfully");
-          Navigation.navigate("Uploads")
+          Navigation.navigate("uploads")
           console.log(response.data);
           // Navigate to next screen or perform any other action
         } else {
@@ -594,7 +594,7 @@ import {
                 selectedValue={factoryId}
                 onValueChange={(itemValue, itemIndex) => setFactoryId(itemValue)}
               >
-                <Picker.Item label="Select Location" value="" />
+                <Picker.Item style={styles.input}label="Select Location" value="" />
                 {LocationOptions.map((option, index) => (
                   <Picker.Item style={styles.input}
                     key={`${option.FactoryId}_${index}`}

@@ -1050,7 +1050,7 @@ const PersonalDetails = () => {
             placeholder="Aadhar No"
             value={personalDetails.AadharNo}
             onChangeText={value => handleChange('AadharNo', value)}
-            placeholderTextColor="red"
+           
           />
 
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>

@@ -17,8 +17,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
+
 const WorkExperience = () => {
-  const navigation = useNavigation();
+    const Navigation = useNavigation();
   const [experiences, setExperiences] = useState([]);
   const [isFresher, setIsFresher] = useState(false);
   const [designationOptions, setDesignationOptions] = useState([]);
@@ -374,6 +375,7 @@ const WorkExperience = () => {
           'Success',
           'Experiences and work experience added successfully',
         );
+        Navigation.navigate("FamilyDetails")
         setFormChanged(false);
       } else {
         throw new Error(

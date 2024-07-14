@@ -150,75 +150,128 @@ const FamilyDetails = () => {
       }
     }
   };
-  
   const handleSubmit = async () => {
     if (isSubmitting) {
-      return;
+      return; // Prevent multiple submissions
     }
     setIsSubmitting(true);
   
     try {
-      const experiencePromises = [];
+      // Separate the entries into new and existing
+      const newFamilies = familyDetails.filter(family => !family.FamilyId);
+      const existingFamilies = familyDetails.filter(family => family.FamilyId);
+      const newLanguages = languageSections.filter(language => !language.AppLanId);
+      const existingLanguages = languageSections.filter(language => language.AppLanId);
   
-      for (const experience of experienceField) {
-        if (!experience.ExpId) {
-          const addExperiencePromise = axios.post(
-            'http://hrm.daivel.in:3000/api/v1/expc/experienceee',
-            {
-              // Data to be sent for adding new experience
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          experiencePromises.push(addExperiencePromise);
-        } else {
-          const updateExperiencePromise = axios.put(
-            'http://hrm.daivel.in:3000/api/v1/expc/updateExpc',
-            {
-              // Data to be sent for updating existing experience
-            },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          experiencePromises.push(updateExperiencePromise);
-        }
-      }
-  
-      await Promise.all(experiencePromises);
-  
-      const WorkExperienceResponse = await axios.put(
-        'http://hrm.daivel.in:3000/api/v1/expc/TotalExperience',
-        {
-          // Data to be sent for work experience update
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+      // Handle new family entries
+      const newFamilyResponses = await Promise.all(newFamilies.map(async (family) => {
+        return await axios.post(
+          "http://hrm.daivel.in:3000/api/v1/fam/family",
+          {
+            Relation: family.relation,
+            Name: family.name,
+            Age: family.age,
+            Work: family.work,
+            MonthSalary: family.monthSalary,
+            PhoneNo: family.phoneNo
           },
-        }
-      );
-  
-      if (WorkExperienceResponse.data.success) {
-        console.log('Work experience inserted successfully');
-        Alert.alert('Success', 'Experiences and work experience added successfully');
-        setFormChanged(false);
-      } else {
-        throw new Error(
-          WorkExperienceResponse.data.message || 'Failed to add work experience'
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            }
+          }
         );
+      }));
+  
+      const familySuccess = newFamilyResponses.every(response => response.data.success);
+  
+      // Handle existing family entries
+      const updateFamilyResponses = await Promise.all(existingFamilies.map(async (family) => {
+        return await axios.put(
+          "http://hrm.daivel.in:3000/api/v1/fam/updatefam",
+          {
+            FamilyId: family.FamilyId,
+            Relation: family.relation,
+            Name: family.name,
+            Age: family.age,
+            Work: family.work,
+            MonthSalary: family.monthSalary,
+            PhoneNo: family.phoneNo
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+      }));
+  
+      const updateFamilySuccess = updateFamilyResponses.every(response => response.data.success);
+  
+      if (familySuccess && updateFamilySuccess) {
+        const familyIds = newFamilyResponses.map(response => response.data.FamilyId);
+        await AsyncStorage.setItem('FamilyIds', JSON.stringify(familyIds));
+  
+        // Handle new language entries
+        const newLanguageResponses = await Promise.all(newLanguages.map(async (language) => {
+          return await axios.post(
+            "http://hrm.daivel.in:3000/api/v1/fam/postLng",
+            {
+              LanId: language.LanId,
+              LanSpeak: language.LanSpeak,
+              LanRead: language.LanRead,
+              LanWrite: language.LanWrite
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              }
+            }
+          );
+        }));
+  
+        const languageSuccess = newLanguageResponses.every(response => response.data.success);
+  
+        // Handle existing language entries
+        const updateLanguageResponses = await Promise.all(existingLanguages.map(async (language) => {
+          return await axios.put(
+            "http://hrm.daivel.in:3000/api/v1/fam/updateLan",
+            {
+              AppLanId: language.AppLanId,
+              LanId: language.LanId,
+              LanSpeak: language.LanSpeak,
+              LanRead: language.LanRead,
+              LanWrite: language.LanWrite
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              }
+            }
+          );
+        }));
+  
+        const updateLanguageSuccess = updateLanguageResponses.every(response => response.data.success);
+  
+        if (languageSuccess && updateLanguageSuccess) {
+          const addedLanguageIds = newLanguageResponses.map(response => response.data.AppLanId);
+          await AsyncStorage.setItem("addedLanguageIds", JSON.stringify(addedLanguageIds));
+  
+          Alert.alert("Success", "Family and Language details added  successfully");
+          Navigation.navigate("Other")
+        } else {
+          Alert.alert("Error", "Failed to add or update language details");
+        }
+      } else {
+        Alert.alert("Error", "Failed to add or update family details");
       }
     } catch (error) {
-      console.error('Error adding experiences:', error.message);
-      Alert.alert('Error', 'Failed to add experiences');
+      console.error("Error:", error.message);
+      Alert.alert("Error", "Failed to add data");
     } finally {
       setIsSubmitting(false);
     }

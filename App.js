@@ -68,8 +68,8 @@ function TabTab() {
         }}
       />
       <Tab.Screen
-        name=" FamilyDetails"
-        component={ FamilyDetails}
+        name="FamilyDetails"
+        component={FamilyDetails}
         options={{
           title:()=>(
             <Icon name='group' size={24} color="black"/>
